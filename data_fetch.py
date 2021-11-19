@@ -4,7 +4,7 @@ import csv
 
 playlist_uris=["37i9dQZF1DWWEJlAGA9gs0"
 ,"spotify:playlist:37i9dQZF1DXbITWG1ZJKYt","37i9dQZF1DWXRqgorJj26U","37i9dQZF1DX6J5NfMJS675"]
-playlist_genres=["Classical","Jazz","Rock","Techno"]
+playlist_genres=[0,1,2,3]
 playlists=[]
 track_objects=[]
 song_count=0
@@ -27,7 +27,7 @@ for tracks,genre in playlists:
         detailed_track=spotify.track(track["track"]["uri"])
         audio_feature=audio_features[0]
             #"Explicit":track["explicit"],"Duration":track["duration_ms"],"Popularity":track["popularity"]
-        track_object={"genre":genre,"explicit":detailed_track["explicit"],"popularity":detailed_track["popularity"]}
+        track_object={"genre":genre,"popularity":detailed_track["popularity"]}
         track_object.update(audio_feature)
         track_object.pop('analysis_url')
         track_object.pop('track_href')
