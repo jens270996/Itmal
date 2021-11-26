@@ -2,8 +2,11 @@ from types import TracebackType
 import spotipy
 import csv
 
-playlist_uris=["37i9dQZF1DWWEJlAGA9gs0"
-,"spotify:playlist:37i9dQZF1DXbITWG1ZJKYt","37i9dQZF1DWXRqgorJj26U","37i9dQZF1DX6J5NfMJS675"]
+classical_uris=["37i9dQZF1DWWEJlAGA9gs0","1h0CEZCm6IbFTbxThn6Xcs"]
+jazz_uris=["37i9dQZF1DXbITWG1ZJKYt","37i9dQZF1DX3SiCzCxMDOH"]
+rock_uris=["37i9dQZF1DWXRqgorJj26U","37i9dQZF1DWZNFWEuVbQpD"]
+techno_uris=["7mwPa6HjqoiUrsk3C2Hitk","37i9dQZF1DX6J5NfMJS675","6jCgabXrYUjqdaF0ozKkTj"]
+playlist_uris=[classical_uris,jazz_uris,rock_uris,techno_uris]
 playlist_genres=[0,1,2,3]
 playlists=[]
 track_objects=[]
@@ -13,9 +16,10 @@ song_count=0
 spotify = spotipy.Spotify(client_credentials_manager=spotipy.oauth2.SpotifyClientCredentials(
     client_id="b0cfe3cff3e04e1c83869890f473549e",client_secret="d89a0d6c74084454b1b82d2ee6b74e07"))
 # spotify.current_user()
-for playlist,genre in zip(playlist_uris,playlist_genres):    
-    playlists.append((spotify.playlist(playlist_id=playlist)["tracks"]["items"]
-    +spotify.playlist_items(playlist_id=playlist,offset=100)["items"],genre))
+for playlist_list,genre in zip(playlist_uris,playlist_genres):
+    for playlist in playlist_list:
+        playlists.append((spotify.playlist(playlist_id=playlist)["tracks"]["items"]
+        +spotify.playlist_items(playlist_id=playlist,offset=100)["items"],genre))
 
 for tracks,genre in playlists:
     print("Running for genre:",genre)
