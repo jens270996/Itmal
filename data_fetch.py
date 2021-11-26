@@ -35,12 +35,18 @@ for tracks,genre in playlists:
         track_object.update(audio_feature)
         track_object.pop('analysis_url')
         track_object.pop('track_href')
-        track_object.pop('uri')
         track_object.pop('id')
+        track_object.pop('uri')
         track_object.pop('type')
         track_objects.append(track_object)
     print("Track_objects:",len(track_objects))
     print("Song count:",song_count)
+
+#cross iterate track_objects, and remove duplicates.
+print("Before removing duplicates:",len(track_objects))
+track_objects=set(track_objects)
+print("After removing duplicates:",len(track_objects))
+
 
 print(dict.keys(track_objects[0]))
 fieldnames=dict.keys(track_objects[0])
