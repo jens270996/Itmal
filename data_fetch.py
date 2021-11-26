@@ -2,10 +2,10 @@ from types import TracebackType
 import spotipy
 import csv
 
-classical_uris=["37i9dQZF1DWWEJlAGA9gs0","1h0CEZCm6IbFTbxThn6Xcs"]
-jazz_uris=["37i9dQZF1DXbITWG1ZJKYt","37i9dQZF1DX3SiCzCxMDOH"]
-rock_uris=["37i9dQZF1DWXRqgorJj26U","37i9dQZF1DWZNFWEuVbQpD"]
-techno_uris=["7mwPa6HjqoiUrsk3C2Hitk","37i9dQZF1DX6J5NfMJS675","6jCgabXrYUjqdaF0ozKkTj"]
+classical_uris=["37i9dQZF1DWWEJlAGA9gs0","1h0CEZCm6IbFTbxThn6Xcs", "37i9dQZF1EIeLlBsaQNENK", "3ttT3EIioY5KlSBI3l4u5H", "5A0hTaFKvOcGZPIQ3zr6aT"]
+jazz_uris=["37i9dQZF1DXbITWG1ZJKYt","37i9dQZF1DX3SiCzCxMDOH", "37i9dQZF1DXb1JVnfCng2p", "40VS343V2hVFe3GGP55ZWQ", " 1JLuxFpcrhA6msxMGTK9Ik"]
+rock_uris=["37i9dQZF1DWXRqgorJj26U","37i9dQZF1DWZNFWEuVbQpD", "34NjkEHmcgjPPaw9uUtpEp", "0qkUCHf4mOb6JutykbutB0", "0cCG38OjT3qO0Pd4mg8j1z"]
+techno_uris=["7mwPa6HjqoiUrsk3C2Hitk","37i9dQZF1DX6J5NfMJS675","6jCgabXrYUjqdaF0ozKkTj", "0itqm5PKjtaSuKaVNQ5KWb", "18vUeZ9BdtMRNV6gI8RnR6"]
 playlist_uris=[classical_uris,jazz_uris,rock_uris,techno_uris]
 playlist_genres=[0,1,2,3]
 playlists=[]
