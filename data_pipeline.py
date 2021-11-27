@@ -5,14 +5,14 @@ import tensorflow.keras as keras
 from tensorflow.keras import optimizers
 from tensorflow.keras import regularizers
 from tensorflow.keras import activations
-from tensorflow.keras.layers import Dropout, Dense, GaussianDropout, Activation
+from tensorflow.keras.layers import Dropout, Dense, GaussianDropout, Activation, BatchNormalization
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from numpy.random import shuffle
 from sklearn.model_selection import KFold
-import tensorflow
-from tensorflow.python.keras.backend import batch_normalization
+from functools import partial
+from tensorflow.python.keras.backend import batch_normalization, dropout
 # import data
 data = pd.read_csv("spotify_data.csv")
 data_classes=["Classical","Jazz","Rock","Techno"]
@@ -37,33 +37,41 @@ class MCDropout(Dropout):
 
 
 
-# train and evaluate models
-
-kFold = KFold(n_splits=12, shuffle=True)
+# train and evaluate models\
+kFold = KFold(n_splits=5, shuffle=True, random_state=42)
 
 fold_n=1
 for train,test in kFold.split(X_train,y_train):
     no_layers = 50
     neurons_pr_layer = 200
+    RegularizedDense = partial(Dense, activation='relu',
+                                    kernel_initializer='he_normal', 
+                                    kernel_regularizer=keras.regularizers.l1_l2(l1=0.001, l2=0.001))
     model =  keras.Sequential() 
 
-    model.add(Dense(200, activation='relu'))    
-    model.add(Dense(64, activation="relu", kernel_initializer="he_normal", kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4), bias_regularizer=regularizers.l2(1e-4), activity_regularizer=regularizers.l2(1e-5))) 
+    model.add(Dropout(0.2))
+    model.add(RegularizedDense(4*300))
+    model.add(Dropout(0.2))
+    model.add(RegularizedDense(4*200))
     model.add(Dropout(0.1))
-    model.add(Dense(256, activation='relu', activity_regularizer=regularizers.l1_l2(l1=0.01, l2=0.01)))
-    model.add(Dropout(0.09))
-    model.add(Dense(128, activation="relu", activity_regularizer=regularizers.l1_l2(l1=0.01, l2=0.01)))
-    model.add(Dropout(0.25))
+    model.add(RegularizedDense(4*50))
+    model.add(Dropout(0.1))
+    model.add(BatchNormalization())
+    model.add(RegularizedDense(4*25))
+    model.add(Dropout(0.1))
+    model.add(BatchNormalization())
+    model.add(RegularizedDense(4*10))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.1))
     model.add(Dense(4, activation='softmax'))
-    #opt=keras.optimizers.SGD(learning_rate=0.01, momentum=0.5)
-    opt =keras.optimizers.Adam(learning_rate=0.01)
-    # for i in range(no_layers):
-    #     model.add(Dropout(.1))
-    #model.compile(optimizer=keras.optimizers.SGD(learning_rate=0.01,momentum=0.8,),
+
+    opt =keras.optimizers.Adam(learning_rate=0.001)
+
     model.compile(optimizer=opt,
-    loss="sparse_categorical_crossentropy",metrics=["accuracy"])
+    loss="sparse_categorical_crossentropy",metrics=['accuracy'])
     #Why is loss: nan in some cases?!?!
-    hist = model.fit(X_train[train],y_train[train],epochs=50, validation_data=(X_train[test],y_train[test]))
+    hist = model.fit(X_train[train],y_train[train],epochs=100, validation_data=(X_train[test],y_train[test]))
+
 
     #loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=[keras.metrics.SparseTopKCategoricalAccuracy()])
     #do monte carlo dropout
@@ -80,4 +88,4 @@ for train,test in kFold.split(X_train,y_train):
     # print("Metrics:")
     # print(metrics)
     fold_n=fold_n+1
-print(max(hist.history['accuracy']))
+    print(max(hist.history['accuracy']))
