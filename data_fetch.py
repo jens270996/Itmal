@@ -2,10 +2,21 @@ from types import TracebackType
 import spotipy
 import csv
 
-classical_uris=["7v9uKvGwd9pwloVMziYPAg","6pYj1EckIAU4TC068BBIz6","3BAtH3eZHdi4vfN6ZkpGiX","37i9dQZF1EId314iwsa9iP","37i9dQZF1DWWEJlAGA9gs0", "1h0CEZCm6IbFTbxThn6Xcs", "37i9dQZF1EIeLlBsaQNENK", "3ttT3EIioY5KlSBI3l4u5H", "5A0hTaFKvOcGZPIQ3zr6aT"]
-jazz_uris=["37i9dQZF1DXbITWG1ZJKYt", "37i9dQZF1DX3SiCzCxMDOH", "37i9dQZF1DXb1JVnfCng2p", "40VS343V2hVFe3GGP55ZWQ", "37i9dQZF1EId4oprFkTPb8", "5pcU1JB2yM2f5OO90PQyAO"]
-rock_uris=["37i9dQZF1EIdFxMZckHt54","6mFshQVVjkGRDhvZyXS2gM","42EEAVMDLQmpwACJ3VlhKW","37i9dQZF1DWXRqgorJj26U", "37i9dQZF1DWZNFWEuVbQpD", "34NjkEHmcgjPPaw9uUtpEp", "0qkUCHf4mOb6JutykbutB0", "0cCG38OjT3qO0Pd4mg8j1z", "5uEuSIS36zZtsne5go7PhI", "0ixebA2tXOSkpV8xab7q1B", "29fOXPbR3qClySksICQ2Yn"]
-techno_uris=["1qM9FkyCiljivkQvkV7DKJ","5lSgExb6yTKfLusGag7bm7","0HPNBM0iY3sYGEY2zftqlO","3ifXguT2UIneWLvg0jlZc3","6Q4pnSDA3RtYMB0AVNRv65","7mwPa6HjqoiUrsk3C2Hitk", "37i9dQZF1DX6J5NfMJS675","37i9dQZF1EIeKh45OZ1ylm", "6jCgabXrYUjqdaF0ozKkTj", "0itqm5PKjtaSuKaVNQ5KWb", "18vUeZ9BdtMRNV6gI8RnR6"]
+classical_uris=["7v9uKvGwd9pwloVMziYPAg","6pYj1EckIAU4TC068BBIz6","3BAtH3eZHdi4vfN6ZkpGiX","37i9dQZF1EId314iwsa9iP","37i9dQZF1DWWEJlAGA9gs0", 
+    "1h0CEZCm6IbFTbxThn6Xcs", "37i9dQZF1EIeLlBsaQNENK", "3ttT3EIioY5KlSBI3l4u5H", "5A0hTaFKvOcGZPIQ3zr6aT", "37i9dQZF1DX3PFzdbtx1Us", 
+    "3Zh1DAcvLngbd1qiBYEex0", "1Z7fO3bkVteGsTbVluOQoH", "36qQ3naFyPxCbbr7QpdADN", "1HY6rzP7xwiIolIXRsKAbW", "4LXbPDPBy6FLZmtYa3ooim", 
+    "7LlzRvcCHFjWHA89IMDbDV", "1t1mH9Xh2v3aH6yJfMlXeP", "32UsbyNeugCxRo6SLvzZ6Y", "48pLGJFuMk12HgVWDdgVA5"]
+jazz_uris=["37i9dQZF1DXbITWG1ZJKYt", "37i9dQZF1DX3SiCzCxMDOH", "37i9dQZF1DXb1JVnfCng2p", "40VS343V2hVFe3GGP55ZWQ", "37i9dQZF1EId4oprFkTPb8", 
+    "5pcU1JB2yM2f5OO90PQyAO", "37i9dQZF1DX2iVTU1bf67i", "6GNoAopv64BlP5oFXrGbza", "37i9dQZF1EIehTvTm4HAQL", "37i9dQZF1EIgAElrSienLL", 
+    "37i9dQZF1EIf1zoXgYNkes", "37i9dQZF1EIcNF0RmPTgbB", "00EDJ9x7DEBpw1Eva8s9US", "37i9dQZF1EIf5KE70N4BpI", "0sJugi8ocE7d7nsO4r2Gm4", 
+    "2AQvOtggQ2mHFdCeWnjcLY", "37i9dQZF1DX55dNU0PWnO5"]
+rock_uris=["37i9dQZF1EIdFxMZckHt54","6mFshQVVjkGRDhvZyXS2gM","42EEAVMDLQmpwACJ3VlhKW","37i9dQZF1DWXRqgorJj26U", "37i9dQZF1DWZNFWEuVbQpD", 
+    "34NjkEHmcgjPPaw9uUtpEp", "0qkUCHf4mOb6JutykbutB0", "0cCG38OjT3qO0Pd4mg8j1z", "5uEuSIS36zZtsne5go7PhI", "0ixebA2tXOSkpV8xab7q1B", 
+    "29fOXPbR3qClySksICQ2Yn"]
+techno_uris=["1qM9FkyCiljivkQvkV7DKJ","5lSgExb6yTKfLusGag7bm7","0HPNBM0iY3sYGEY2zftqlO","3ifXguT2UIneWLvg0jlZc3","6Q4pnSDA3RtYMB0AVNRv65",
+    "7mwPa6HjqoiUrsk3C2Hitk", "37i9dQZF1DX6J5NfMJS675","37i9dQZF1EIeKh45OZ1ylm", "6jCgabXrYUjqdaF0ozKkTj", "0itqm5PKjtaSuKaVNQ5KWb", 
+    "18vUeZ9BdtMRNV6gI8RnR6", "4nEuCsvecNXuQ4B6lCOlFl", "2pX5seO5zvYeGEA9HX91yE", "561d05MakkMq23apDVqOvd", "0BcS6dygtX4L3MHPEP0F2k", 
+    "37i9dQZF1DX2R0a3scWaq6", "1R6agaYjDLeo779oDZKCQ0"]
 
 
 playlist_uris=[classical_uris,jazz_uris,rock_uris,techno_uris]
