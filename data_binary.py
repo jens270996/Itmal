@@ -23,17 +23,18 @@ MinMaxScaler().fit_transform(X)
     # 500 training samples, 74 test samples
 X_train,X_test,y_train,y_test = X[:3600,:],X[3600:,:],y[:3600],y[3600:]
 sgd_clf = SGDClassifier(random_state=42)
-y_train_3 = (y_train == 2)
-y_test_3 = (y_test == 2)
+y_train_3 = (y_train == 1)
+y_test_3 = (y_test == 1)
 print(np.unique(y_train))
 print(shape(X_train))
 print(shape(y_train_3))
 print(shape(y_train))
 #print(y_train)
-sgd_clf.fit(X_train, y_train_3)
+lasse = sgd_clf.fit(X_train, y_train_3)
+print(lasse)
 print(f'{sgd_clf.predict([X_test[0]])}')
 print(f'y_test[0]={y_test_3[0]}')
 
-print(f'{cross_val_score(sgd_clf, X_train, y_train, cv=510, scoring="accuracy")}')
+print(f'{cross_val_score(sgd_clf, X_train, y_train, cv=10, scoring="accuracy")}')
 
 
