@@ -34,17 +34,17 @@ spotify = spotipy.Spotify(client_credentials_manager=spotipy.oauth2.SpotifyClien
 for playlist_list,genre in zip(playlist_uris,playlist_genres):
     for playlist in playlist_list:
         palyistlist_dict= spotify.playlist(playlist_id=playlist)
-        playlists.append((palyistlist_dict["tracks"]["items"],genre))
+        playlists.append((palyistlist_dict["tracks"]["items"],genre,playlist))
         total = palyistlist_dict["tracks"]["total"]
         print("total is:",total)
         for i in range(1,math.ceil((total)/100)):
             print("hi from loop it:",i)
-            playlists.append((spotify.playlist_items(playlist_id=playlist,offset=i*100)["items"],genre))
+            playlists.append((spotify.playlist_items(playlist_id=playlist,offset=i*100)["items"],genre,playlist))
 
 
-for tracks,genre in playlists:
+for tracks,genre,playlist in playlists:
     print("Running for genre:",genre)
-    
+    print("playlist uri:",playlist)
     for track in tracks:
         song_count=song_count+1
         audio_features=spotify.audio_features(track["track"]["uri"])
