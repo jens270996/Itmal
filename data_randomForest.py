@@ -1,29 +1,20 @@
-from __future__ import print_function
-from numpy import random
-from numpy.core.fromnumeric import shape
-import tensorflow.keras as keras
-from tensorflow.keras import optimizers
-from tensorflow.keras import regularizers
-from tensorflow.keras import activations
-from tensorflow.keras.layers import Dropout, Dense, GaussianDropout, Activation, BatchNormalization
+from time import time
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from numpy.random import shuffle
+from numpy.core.fromnumeric import shape
+from sklearn.linear_model import SGDClassifier
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.metrics import classification_report, f1_score
+
 from sklearn.model_selection import KFold
-from functools import partial
-from tensorflow.python.keras.backend import batch_normalization, dropout
-from sklearn.metrics import classification_report
-# import data
 data = pd.read_csv("spotify_data.csv")
+
 data_classes=["Classical","Jazz","Rock","Techno"]
-data = data.to_numpy()
-# Shuffle data
-shuffle(data)
-X=data[:,1:]
-y=data[:,0]
-# Scale data
-MinMaxScaler().fit_transform(X)
+
 #region  Output from O3 exercise
 currmode="N/A" # GLOBAL var!
 def SearchReport(model): 
@@ -88,52 +79,46 @@ def FullReport(model, X_test, y_test, t):
 
 #endregion
 
+#rock_data = data.where(data["genre"] == 3).dropna().reset_index(drop=True) #red
 
-print(shape(y))
-print(shape(X))
+#print(rock_data)
+data = data.to_numpy()
+# Shuffle data
+shuffle(data)
+X=data[:,1:]
+y=data[:,0]
+# Scale data
+MinMaxScaler().fit_transform(X)
 # Create test and training sets
     # 500 training samples, 74 test samples
 X_train,X_test,y_train,y_test = X[:3600,:],X[3600:,:],y[:3600],y[3600:]
 
-class MCDropout(Dropout):
-    def call(self, inputs):
-        return super().call(inputs, training=True)
 
+model = RandomForestClassifier()
+tuning_parameters = {
+    'n_estimators': (30, 50, 500, 1000),
+    'criterion': ('gini', 'entropy'),
+    'max_features': (2, 3, 4, 6, 8)
+}
 
+CV = 5
+VERBOSE = 0
+start = time()
+random_tuned = RandomizedSearchCV(model,
+                        tuning_parameters,
+                        cv= CV,
+                        scoring='f1_micro',
+                        verbose=VERBOSE,
+                        n_iter=2,
+                        n_jobs=-1)
 
-# train and evaluate models\
-kFold = KFold(n_splits=5, shuffle=True, random_state=42)
+hist = random_tuned.fit(X_train, y_train)
+t = time() - start
+estimator = hist.best_estimator_
+print(estimator.feature_importances_)
+print(hist.best_score_)
+print(hist.best_params_)
+print(random_tuned.n_features_in_)
+FullReport(random_tuned, X_test, y_test, t)
+#print(b0)
 
-fold_n=1
-for train,test in kFold.split(X_train,y_train):
-    no_layers = 50
-    neurons_pr_layer = 200
-    RegularizedDense = partial(Dense, activation='relu',
-                                    kernel_initializer='he_normal', 
-                                    kernel_regularizer=keras.regularizers.l1_l2(l1=0.001, l2=0.001))
-    model =  keras.Sequential() 
-
-    model.add(Dropout(0.2))
-    model.add(RegularizedDense(4*300))
-    model.add(Dropout(0.2))
-    model.add(RegularizedDense(4*200))
-    model.add(Dropout(0.1))
-    model.add(RegularizedDense(4*50))
-    model.add(Dropout(0.1))
-    model.add(BatchNormalization())
-    model.add(RegularizedDense(4*25))
-    model.add(Dropout(0.1))
-    model.add(BatchNormalization())
-    model.add(RegularizedDense(4*10))
-    model.add(BatchNormalization())
-    model.add(Dropout(0.1))
-    model.add(Dense(4, activation='softmax'))
-
-    opt =keras.optimizers.Adam(learning_rate=0.001)
-
-    model.compile(optimizer=opt,
-    loss="sparse_categorical_crossentropy",metrics=['accuracy'])
-    #Why is loss: nan in some cases?!?!
-    hist = model.fit(X_train[train],y_train[train],epochs=2, validation_data=(X_train[test],y_train[test]))
-    fold_n=fold_n+1
-    print(max(hist.history['accuracy']))
