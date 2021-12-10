@@ -77,6 +77,7 @@ def FullReport(model, X_test, y_test, t):
 
 data = data.to_numpy()
 # Shuffle data
+np.random.seed(42)
 shuffle(data)
 X=data[:,1:]
 y=data[:,0]

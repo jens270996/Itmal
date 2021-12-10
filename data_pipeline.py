@@ -10,6 +10,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from numpy.random import shuffle
+import numpy.random
 from sklearn.model_selection import KFold
 from functools import partial
 from tensorflow.python.keras.backend import batch_normalization, dropout
@@ -19,6 +20,7 @@ data = pd.read_csv("spotify_data.csv")
 data_classes=["Classical","Jazz","Rock","Techno"]
 data = data.to_numpy()
 # Shuffle data
+numpy.random.seed(42)
 shuffle(data)
 X=data[:,1:]
 y=data[:,0]
@@ -92,8 +94,9 @@ def FullReport(model, X_test, y_test, t):
 print(shape(y))
 print(shape(X))
 # Create test and training sets
+split_index = 6000
     # 500 training samples, 74 test samples
-X_train,X_test,y_train,y_test = X[:3600,:],X[3600:,:],y[:3600],y[3600:]
+X_train,X_test,y_train,y_test = X[:split_index,:],X[split_index:,:],y[:split_index],y[split_index:]
 
 class MCDropout(Dropout):
     def call(self, inputs):

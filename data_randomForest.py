@@ -8,9 +8,10 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
-from sklearn.metrics import classification_report, f1_score
-
+from sklearn.metrics import classification_report, f1_score, accuracy_score
+from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
+from sklearn.metrics import confusion_matrix
 data = pd.read_csv("spotify_data.csv")
 
 data_classes=["Classical","Jazz","Rock","Techno"]
@@ -84,15 +85,16 @@ def FullReport(model, X_test, y_test, t):
 #print(rock_data)
 data = data.to_numpy()
 # Shuffle data
+np.random.seed(42)
 shuffle(data)
 X=data[:,1:]
 y=data[:,0]
 # Scale data
 MinMaxScaler().fit_transform(X)
 # Create test and training sets
-    # 500 training samples, 74 test samples
-X_train,X_test,y_train,y_test = X[:3600,:],X[3600:,:],y[:3600],y[3600:]
-
+split_index_1 = 6500
+split_index_2 = 6500
+X_train,X_val,X_test,y_train,y_val,y_test = X[:split_index_1,:],X[split_index_1:split_index_2,:],X[split_index_2:,:],y[:split_index_1],y[split_index_1:split_index_2],y[split_index_2:]
 
 model = RandomForestClassifier()
 tuning_parameters = {
@@ -109,15 +111,29 @@ random_tuned = RandomizedSearchCV(model,
                         cv= CV,
                         scoring='f1_micro',
                         verbose=VERBOSE,
-                        n_iter=2,
+                        n_iter=100,
                         n_jobs=-1)
 
 hist = random_tuned.fit(X_train, y_train)
 t = time() - start
 estimator = hist.best_estimator_
+feature_arr = ["popularity","danceability","energy","key","loudness","mode","speechiness","acousticness","instrumentalness","liveness","valence","tempo","duration_ms","time_signature"]
+print("popularity,danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,duration_ms,time_signature")
 print(estimator.feature_importances_)
+print("Best score: ")
 print(hist.best_score_)
 print(hist.best_params_)
+train_mse=mean_squared_error(y_train,random_tuned.predict(X_train))
+val_mse = mean_squared_error(y_test,random_tuned.predict(X_test))
+confusion_matrix_ = confusion_matrix(y_train,random_tuned.predict(X_train))
+print("Confusion matrix:")
+print(confusion_matrix_)
+confusion_matrix_ = confusion_matrix(y_test,random_tuned.predict(X_test))
+print("Confusion matrix on validation:")
+print(confusion_matrix_)
+print("train mse is:",train_mse,"validation mse is:",val_mse)
+acc=accuracy_score(y_test,random_tuned.predict(X_test))
+print("accuracy score is:",acc)
 print(random_tuned.n_features_in_)
 FullReport(random_tuned, X_test, y_test, t)
 #print(b0)

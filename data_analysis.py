@@ -5,11 +5,11 @@ data = pd.read_csv("spotify_data.csv")
 
 # print(data.dtypes)
 # print(data.columns)
-print(data.where(data["explicit"]==1)["explicit"].count())
-classical_data = data.where(data["genre"] == 0).dropna().drop(columns=["genre","mode","explicit","key","time_signature"]).reset_index(drop=True) #blue
-jazz_data = data.where(data["genre"] == 1).dropna().drop(columns=["genre","mode","explicit","key","time_signature"]).reset_index(drop=True) #yellow
-techno_data = data.where(data["genre"] == 2).dropna().drop(columns=["genre","mode","explicit","key","time_signature"]).reset_index(drop=True) #nyan
-rock_data = data.where(data["genre"] == 3).dropna().drop(columns=["genre","mode","explicit","key","time_signature"]).reset_index(drop=True) #red
+# print(data.where(data["explicit"]==1)["explicit"].count())
+classical_data = data.where(data["genre"] == 0)#.dropna().drop(columns=["genre","mode","explicit","key","time_signature"]).reset_index(drop=True) #blue
+jazz_data = data.where(data["genre"] == 1)#.dropna().drop(columns=["genre","mode","explicit","key","time_signature"]).reset_index(drop=True) #yellow
+techno_data = data.where(data["genre"] == 2)#.dropna().drop(columns=["genre","mode","explicit","key","time_signature"]).reset_index(drop=True) #nyan
+rock_data = data.where(data["genre"] == 3)#.dropna().drop(columns=["genre","mode","explicit","key","time_signature"]).reset_index(drop=True) #red
 
 for outer_attribute in classical_data.columns:
     vals=[classical_data[outer_attribute].mean(),jazz_data[outer_attribute].mean(),techno_data[outer_attribute].mean(),rock_data[outer_attribute].mean()]
